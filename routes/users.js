@@ -4,6 +4,7 @@ const router = express.Router();
 const { sequelize, models } = require('../db');
 const { User } = models;
 
+const bcryptjs = require('bcryptjs');
 const authenticateUser = require('./misc/authenticate');
 
 const { check, validationResult } = require('express-validator/check');
@@ -28,7 +29,8 @@ router.post('/', ([
         const errorMessages = errors.array().map(error => error.msg);
         res.status(400).json({ errors: errorMessages });
     } else {
-        const user = req.body;
+        let user = req.body;
+        user.password = bcryptjs.hashSync(user.password);
         User.create(user)
         .then(() => res.redirect(201, '/'))
         .catch(err => console.log(err));
