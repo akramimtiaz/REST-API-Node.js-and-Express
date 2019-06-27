@@ -10,7 +10,7 @@ const coursesRouter = require('./routes/api/courses');
 const enableGlobalErrorLogging = process.env.ENABLE_GLOBAL_ERROR_LOGGING === 'true';
 
 //Require DB
-const { sequelize, models } = require('./db');
+const { sequelize } = require('./db');
 
 //Testing the Database Connection
 sequelize
