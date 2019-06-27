@@ -31,8 +31,14 @@ router.post('/', ([
     } else {
         let user = req.body;
         user.password = bcryptjs.hashSync(user.password);
-        User.create(user)
-        .then(() => res.redirect(201, '/'))
+        
+        User.create({
+            firstName: user.firstName,
+            lastName: user.lastName,
+            emailAddress: user.emailAddress,
+            password: user.password
+        })
+        .then(() => res.status(201).location('/'))
         .catch(err => console.log(err));
     }
 })
