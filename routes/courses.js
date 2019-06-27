@@ -9,7 +9,7 @@ const authenticateUser = require('./misc/authenticate');
 
 const { check, validationResult } = require('express-validator/check');
 
-//RETRIEVE ALL
+//GET - Returns a list of courses (including the user that owns each course)
 router.get('/', (req, res) => {
     Course.findAll({
         attributes: ['id', 'title', 'description', 'estimatedTime', 'materialsNeeded', 'userId'],
@@ -18,7 +18,7 @@ router.get('/', (req, res) => {
     .then(courses => res.status(200).json(courses))
     .catch(error => console.log(error));
 });
-//READ
+//GET - Returns the course (including the user that owns the course) for the provided course ID
 router.get('/:id', (req, res) => {
     const id = req.params.id;
     Course.findOne({
@@ -37,10 +37,10 @@ router.get('/:id', (req, res) => {
     })
     .catch(error => console.log(error));
 });
-//CREATE
-router.post('/', ([
+//POST -  Creates a course, sets the Location header to the URI for the course, and returns no content
+router.post('/', authenticateUser, ([
     check('title').exists().isLength({min: 2, max: 255}).withMessage('Please provide a value for "title"'),
-    check('description').exists().isLength({min: 2}).withMessage('Please enter a value for "description"'),
+    check('description').exists().isLength({min: 2}).withMessage('Please enter a value for "description"')
 ]), (req, res) => {
     const errors = validationResult(req);
 
@@ -56,12 +56,12 @@ router.post('/', ([
             materialsNeeded: course.materialsNeeded,
             userId: course.userId    
         })
-        .then((course) => res.status(201).location(`/api/courses/${course.id}`))
+        .then((course) => res.status(201).location(`/api/courses/${course.id}`).end())
         .catch((error) => console.log(error));
     }
 });
-//UPDATE
-router.put('/:id', ([
+//PUT - Updates a course and returns no content
+router.put('/:id', authenticateUser, ([
     check('title').exists().isLength({min: 2, max: 255}).withMessage('Please provide a value for "title"'),
     check('description').exists().isLength({min: 2}).withMessage('Please enter a value for "description"')
 ]),(req, res) => {
@@ -79,15 +79,19 @@ router.put('/:id', ([
         })
         .then((course) => {
             if(course){
-                const course = req.body
-                course.update({
-                    title: course.title,
-                    description: course.description,
-                    estimatedTime: course.estimatedTime,
-                    materialsNeeded: course.materialsNeeded,
-                    userId: course.userId
-                });
-                res.status(204).end();
+                if(course.userId == req.currentUser.id){
+                    course.update({
+                        title: req.body.title,
+                        description: req.body.description,
+                        estimatedTime: req.body.estimatedTime,
+                        materialsNeeded: req.body.materialsNeeded,
+                        userId: req.body.userId
+                    })
+                    .then(() => res.status(204).end())
+                    .catch(error => console.log(error));
+                } else {
+                    res.status(403).end();
+                }
             } else {
                 res.status(404).json({ error: 'Not Found' });
             }
@@ -95,8 +99,8 @@ router.put('/:id', ([
         .catch((error) => console.log(error));
     }
 });
-//DELETE
-router.delete('/:id', (req, res) => {
+//DELETE - Deletes a course and returns no content
+router.delete('/:id', authenticateUser, (req, res) => {
     const id = req.params.id;
     Course.findOne({
         where: {
@@ -105,8 +109,12 @@ router.delete('/:id', (req, res) => {
     })
     .then(course => {
         if(course){
-            course.destroy();
-            res.status(204).end();
+            if(course.userId == req.currentUser.id){
+                course.destroy();
+                res.status(204).end();
+            } else {
+                res.status(403).end();
+            }
         } else {
             res.status(404).json({ error: 'Not Found' });
         }
