@@ -1,17 +1,9 @@
-const express = require('express');
-const router = express.Router();
+const { check } = require('express-validator/check');
 
-const { sequelize, models } = require('../db');
+const { models } = require('../../../../db');
 const { User } = models;
 
-const authenticateUser = require('./misc/authenticate');
-
-const { check, validationResult } = require('express-validator/check');
-const controller = require('../controllers/users')
-
-router.get('/', authenticateUser, controller.getUser);
-
-router.post('/', ([
+exports.userInfo = [
     check('firstName').exists().isLength({min: 2, max: 255}).withMessage('Please provide a value for "firstName"'),
     check('lastName').exists().isLength({min: 2, max: 255}).withMessage('Please provide a value for "lastName"'),
     check('password').exists().isLength({min: 5, max: 20}).withMessage('Please provide a valid password for "password"'),
@@ -25,13 +17,11 @@ router.post('/', ([
             })
             .then(user => {
                 if(user){
-                    return Promise.reject('The specified email is already in use')
+                    return Promise.reject('The specified email is already in use');
                 } 
             });
         } else {
-            return Promise.reject('No email sepecified')
+            return Promise.reject('No email sepecified');
         }
     })
-]), controller.createUser)
-
-module.exports = router;
+];

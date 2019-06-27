@@ -1,7 +1,7 @@
 const bcryptjs = require('bcryptjs');
 const auth = require('basic-auth');
 
-const { sequelize, models } = require('../../db');
+const { models } = require('../../../db');
 const { User } = models;
 
 const  authenticateUser = async (req, res, next) => {
