@@ -19,7 +19,12 @@ const  authenticateUser = async (req, res, next) => {
             const authenticated = bcryptjs.compareSync(credentials.pass, user.password);
             if(authenticated){ //username exists within db and hashed password matches
                 console.log(`Authentication successful for username: ${credentials.name}`);
-                req.currentUser = user; //extend request object with 'currentUser' property, can be used elsewhere to obtain authenticated user credentials
+                req.currentUser = {  //extend request object with 'currentUser' property, can be used elsewhere to obtain authenticated user credentials
+                    id: user.id,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    emailAddress: user.emailAddress
+                }; 
             } else {
                 message = `Authentication failure for username: ${credentials.name}`;
             }

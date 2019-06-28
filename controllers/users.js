@@ -6,10 +6,7 @@ const { User } = models;
 
 exports.getUser = (req, res) => {
     const user = req.currentUser;
-    res.json({
-        name: `${user.firstName} ${user.lastName}`,
-        username: user.emailAddress
-    });
+    res.json(user);
 }
 
 exports.createUser = (req, res) => {
