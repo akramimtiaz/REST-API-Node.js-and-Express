@@ -11,8 +11,8 @@ exports.courseInfo = [
         .exists().withMessage(`'description' undefined`)
         .isLength({min: 2}).withMessage(`please provide a valid description`),
     check('userId')
-        .optional()
-        .isInt().withMessage('please provide a valid user id')
+        .exists().withMessage(`'userId' undefined`)
+        .isInt().withMessage('please provide a valid user-id')
         .custom(id => {
             return User.findByPk(id)
             .then(user => {
