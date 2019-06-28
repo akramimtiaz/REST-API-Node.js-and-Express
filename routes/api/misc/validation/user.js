@@ -29,7 +29,7 @@ exports.userInfo = [
                     } 
                 });
             } else {
-                return Promise.reject('');
+                return Promise.reject('email undefined');
             }
         })
 ];
