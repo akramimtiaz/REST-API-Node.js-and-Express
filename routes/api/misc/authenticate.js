@@ -10,6 +10,7 @@ const  authenticateUser = async (req, res, next) => {
 
     if(credentials){
         const user = await User.findOne({
+            attributes: ['id', 'firstName', 'lastName', 'emailAddress', 'password'],
             where: {
                 emailAddress: credentials.name
             }
