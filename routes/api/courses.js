@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const authenticateUser = require('./misc/authenticate');
+const authenticate = require('./misc/authenticate');
 const validate = require('./misc/validation/course');
 const controller = require('../../controllers/courses');
 
@@ -12,12 +12,12 @@ router.get('/', controller.getCourses);
 router.get('/:id', controller.getCourse);
 
 //POST - 201 - Creates a course, sets the Location header to the URI for the course, and returns no content
-router.post('/', authenticateUser, validate.courseInfo, controller.createCourse);
+router.post('/', authenticate, validate.courseInfo, controller.createCourse);
 
 //PUT - 204 - Updates a course and returns no content
-router.put('/:id', authenticateUser, validate.courseInfo, controller.updateCourse);
+router.put('/:id', authenticate, validate.courseInfo, controller.updateCourse);
 
 //DELETE - 204 - Deletes a course and returns no content
-router.delete('/:id', authenticateUser, controller.deleteCourse);
+router.delete('/:id', authenticate, controller.deleteCourse);
 
 module.exports = router;
