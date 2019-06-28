@@ -1,22 +1,24 @@
 const { check } = require('express-validator/check');
 
 const { models } = require('../../../../db');
-const { User, Course } = models;
+const { User } = models;
 
 exports.courseInfo = [
-    check('title').exists().isLength({min: 2, max: 255}).withMessage('Please provide a value for "title"'),
-    check('description').exists().isLength({min: 2}).withMessage('Please enter a value for "description"')
+    check('title')
+        .exists().withMessage(`'title' undefined`)
+        .isLength({min: 2, max: 255}).withMessage(`please provide a valid title`),
+    check('description')
+        .exists().withMessage(`'description' undefined`)
+        .isLength({min: 2}).withMessage(`please provide a valid description`),
+    check('userId')
+        .optional()
+        .isInt().withMessage('please provide a valid user id')
+        .custom(id => {
+            return User.findByPk(id)
+            .then(user => {
+                if(!user){
+                    return Promise.reject('user does not exist');
+                }
+            });
+        })
 ];
-
-/**
- * CUSTOM VALIDATION
- * 
- * check('userId').exists().isInt().withMessage('Please enter a valid User ID for "userId"').custom(value => {
-        return User.findByPk(value)
-        .then(user => {
-            if(!user){
-                return Promise.reject('User ID does not exist')
-            } 
-        });
-    })
- */
