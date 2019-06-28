@@ -10,16 +10,16 @@ const  authenticateUser = async (req, res, next) => {
 
     if(credentials){
         const user = await User.findOne({
-            attributes: ['id', 'firstName', 'lastName', 'emailAddress', 'password'],
+            attributes: ['id', 'firstName', 'lastName', 'emailAddress', 'password'], //columns to return
             where: {
                 emailAddress: credentials.name
             }
         });
         if(user){
             const authenticated = bcryptjs.compareSync(credentials.pass, user.password);
-            if(authenticated){
+            if(authenticated){ //username exists within db and hashed password matches
                 console.log(`Authentication successful for username: ${credentials.name}`);
-                req.currentUser = user;
+                req.currentUser = user; //extend request object with 'currentUser' property, can be used elsewhere to obtain authenticated user credentials
             } else {
                 message = `Authentication failure for username: ${credentials.name}`;
             }
@@ -30,7 +30,7 @@ const  authenticateUser = async (req, res, next) => {
         message = 'Authentication header not found';
     }
 
-    if (message) {
+    if (message) { //an error occurred
         console.warn(message);
         res.status(401).json({ message: 'Access Denied' });
     } else {

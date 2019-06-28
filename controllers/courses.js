@@ -6,7 +6,7 @@ const { validationResult } = require('express-validator/check');
 exports.getCourses = (req, res) => {
     Course.findAll({
         attributes: ['id', 'title', 'description', 'estimatedTime', 'materialsNeeded', 'userId'],
-        include: [{ model: User, as: 'User', attributes: ['id', 'firstName', 'lastName', 'emailAddress']}]
+        include: [{ model: User, as: 'User', attributes: ['id', 'firstName', 'lastName', 'emailAddress']}] //association User table to also be included in query
     })
     .then(courses => res.status(200).json(courses))
     .catch(error => console.log(error));
