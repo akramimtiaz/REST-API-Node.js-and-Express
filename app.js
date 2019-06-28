@@ -15,8 +15,8 @@ const { sequelize } = require('./db');
 //Testing the Database Connection
 sequelize
   .authenticate()
-  .then(() => console.log('Authentication Successful'))
-  .catch(err => console.log('Error:', err));
+  .then(() => console.log('authentication successful - connected to database'))
+  .catch(err => console.log('an error occurred - failed to connect to database - ', err));
 
 
 // create the Express app
