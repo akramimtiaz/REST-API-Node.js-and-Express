@@ -29,7 +29,7 @@ exports.userInfo = [
                     } 
                 });
             } else {
-                return Promise.reject('No email sepecified');
+                return Promise.reject('');
             }
         })
 ];
